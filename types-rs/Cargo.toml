@@ -1,0 +1,8 @@
+[package]
+name = "types-rs"
+version = "0.1.0"
+authors = ["Yale Cason <yale.cason@gmail.com>"]
+
+[dependencies]
+lazy_static = "0.2"
+regex = "0.2"

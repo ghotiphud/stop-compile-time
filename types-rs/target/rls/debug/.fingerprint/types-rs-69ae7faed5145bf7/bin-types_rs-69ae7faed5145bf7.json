@@ -1,0 +1,1 @@
+{"rustc":18185865601434620250,"features":"[]","target":14001119744258048517,"profile":14119667493710126711,"deps":[["regex v0.2.2",2017260090314571277]],"local":[{"MtimeBased":[[1508812125,739379700],"/mnt/storage/dev/type-first-dev/types-rs/target/rls/debug/.fingerprint/types-rs-69ae7faed5145bf7/dep-bin-types_rs-69ae7faed5145bf7"]}],"rustflags":["--error-format=json"]}

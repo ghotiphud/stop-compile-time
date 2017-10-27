@@ -1,0 +1,8 @@
+.reveal table td + td,
+.reveal table th + th {
+  border-left: 1px solid #888;
+}
+
+.reveal table thead {
+  border-bottom: 7px double;
+}
