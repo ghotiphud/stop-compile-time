@@ -1,0 +1,579 @@
+<!doctype html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+	<title>Stop! Compile-Time!</title>
+
+	<link rel="stylesheet" href="css/reveal.css">
+	<link rel="stylesheet" href="css/theme/black.css">
+
+	<!-- Theme used for syntax highlighting of code -->
+	<link rel="stylesheet" href="lib/css/monokai.css">
+	<link rel="stylesheet" href="css/custom.css">
+
+	<!-- Printing and PDF exports -->
+	<script>
+		var link = document.createElement('link');
+		link.rel = 'stylesheet';
+		link.type = 'text/css';
+		link.href = window.location.search.match(/print-pdf/gi) ? 'css/print/pdf.css' : 'css/print/paper.css';
+		document.getElementsByTagName('head')[0].appendChild(link);
+	</script>
+</head>
+
+<body>
+	<div class="reveal">
+		<div class="slides">
+			<section data-markdown data-separator-vertical="^\n;;;\n$">
+				<textarea data-template>
+					# Stop! 
+					# Compile-Time!
+					### (Can't Touch This)
+					<br />
+
+					Yale Cason III
+
+					Twitter: @ycason
+
+					Github: ghotiphud
+
+					note:
+					Subtitled "A cautionary tale on picking your 
+					title and description before you have any material".
+
+					So, here's some M.C. Hammer
+				</textarea>
+			</section>
+
+			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
+				<textarea data-template>
+					<!-- .slide: data-background-image="img/hammer_dance.webp" data-background-size="contain" -->
+
+					;;;
+
+					<!-- .slide: data-background-image="img/hammer_running_man.gif" data-background-size="contain" -->
+
+					;;;
+
+					<!-- .slide: data-background-image="img/hammer_shuffle.webp" data-background-size="contain" -->					
+				</textarea>
+			</section>
+
+			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
+				<textarea data-template>
+					# Type Systems
+
+					* Communicating to the computer <!-- .element: class="fragment" -->
+					* Communicating to other developers <!-- .element: class="fragment" -->
+					* Automating checking invariants <!-- .element: class="fragment" -->
+
+					note:
+					Type systems have a few purposes, communicating to the computer,
+					communicating to other devs, and helping the compiler prevent errors.
+
+					And the hope is that it will help prevent situations like this...
+
+					;;;
+
+					<!-- .slide: data-background-image="img/programmer_bug.gif" data-background-size="contain" -->
+
+					note:
+					Or this:
+
+					;;;
+
+					<!-- .slide: data-background-image="img/ship_it.webp" data-background-size="contain" -->
+
+					note:
+					But most developers' first experience with a staticly typed language goes 
+					something like this:
+
+					;;;
+
+					<!-- .slide: data-background-image="img/types_are_a_lie.jpg" data-background-size="contain" -->
+				
+					note:
+					We haven't really described anything of value, 
+					so there's not much the compiler can do for us
+				</textarea>
+			</section>
+
+			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
+				<textarea data-template>
+					# Pop Quiz!
+
+					## ( In C# )
+					
+					note:
+					I work in C# every day, and I imagine most in the audience do as well.
+
+					;;;
+
+					## What is x?
+					
+					```csharp
+					int ReturnsInt() {
+						// code
+					}
+
+					var x = ReturnsInt();
+					```
+					
+					Integer <!-- .element: class="fragment" -->
+
+					;;;
+
+					## What is y?
+
+					```csharp
+					string ReturnsString() {
+						// code
+					}
+
+					var y = ReturnsString();
+					```
+
+					String <!-- .element: class="fragment" -->
+
+					OR null <!-- .element: class="fragment" -->
+
+					;;;
+
+					## What is z?
+
+					```csharp
+					MyClass ReturnsMyClass() {
+						// code
+					}
+
+					var z = ReturnsMyClass();
+					```
+					
+					MyClass <!-- .element: class="fragment" -->
+
+					OR null <!-- .element: class="fragment" -->
+
+					( I lied on the first two ) <!-- .element: class="fragment" -->
+
+					;;;
+
+					<!-- .slide: data-background-image="img/exceptions.jpg" data-background-size="contain" -->
+
+					note:
+					Documentation, Code Contracts, etc. can be used to mitigate these issues.
+				</textarea>
+			</section>
+
+			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
+				<textarea data-template>
+					# Stronger Typing?
+
+					note:
+					What if we could express our intentions better?
+					Surely that would be great for the compiler to have stronger guarantees, 
+					but more importantly, the next developer's mental compiler doesn't 
+					have to work quite as hard.
+
+					;;;
+
+					# Option
+					( think `Nullable<T>` )
+
+					```rust
+					enum Option<T> {
+						Some(T),
+						None
+					}
+					```
+
+					<div>
+					<br />
+					```rust
+					Option<String> 
+					vs 
+					String
+					```
+					</div> <!-- .element: class="fragment" -->
+
+					note:
+					Here we see a type with either Some value of `T` or None.
+
+					Being explicit about things that can be None frees us 
+					to be explicit about things that can never be None
+
+					There is an Optional library for C#, and things like NullGuard.Fody 
+					that can help, but no true C# solution.
+
+					;;;
+
+					<!-- .slide: data-background-image="img/grumpy_null.jpg" data-background-size="contain" -->
+
+					;;;
+
+					# Result
+					( Either Value or Error )
+
+					```rust
+					enum Result<T,E> {
+						Ok(T),
+						Err(E)
+					}
+					```
+					
+					<div>
+					<br />
+					```rust
+					fn a() -> Result<String, SomeErrorType>
+					vs 
+					fn b() -> String 
+					```
+					</div> <!-- .element: class="fragment" -->
+
+					note:
+					Once again, being explicit about exceptions frees us 
+					to describe functions that can't fail.
+
+					Cheating a bit here due to panic!(), .unwrap(), etc. 
+					But in general panics are considered bugs to be fixed.
+
+					;;;
+
+					<!-- .slide: data-background-image="img/most_interesting_error.jpg" data-background-size="contain" -->
+
+					;;;
+					
+					```csharp
+					int ReturnsInt()
+					```
+
+					# ==
+					
+					<div>
+					```rust
+					fn returns_int() -> Result<i32, SomeErrorType>
+					```
+					</div> <!-- .element: class="fragment" -->
+
+					Error not possible? <!-- .element: class="fragment" -->
+
+					<div>
+					```rust
+					fn returns_int() -> i32
+					```
+					</div> <!-- .element: class="fragment" -->
+
+					;;;
+
+					```csharp
+					string ReturnsString()
+					```
+
+					# ==
+
+					<div>
+					```rust
+					fn returns_string() -> 
+							Result<Option<String>, SomeErrorType>
+					```
+					</div> <!-- .element: class="fragment" -->
+					
+					Error & None not possible? <!-- .element: class="fragment" -->
+
+					<div>
+					```rust
+					fn returns_string() -> String
+					```
+					</div> <!-- .element: class="fragment" -->
+
+				</textarea>
+			</section>
+
+			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
+				<textarea data-template>
+					# Scenario
+
+					;;;
+
+					```rust
+					struct Contact {
+						pub first_name: Option<String>,
+						pub middle_name: Option<String>,
+						pub last_name: Option<String>,
+
+						pub email_address: Option<String>,
+						pub email_verified: bool,
+					}
+					```
+
+					note:
+					Most everyone has some class that looks similar to this
+					Straight translation from C# equivalent.
+
+					Q: Should everything be optional?
+					* What is important here?
+					* Is Email required?
+
+					;;;
+
+					<!-- .slide: data-background-image="img/fry_nullable.jpg" data-background-size="contain" -->
+
+					;;;
+
+					```rust
+					struct Contact {
+						pub first_name: String,
+						pub middle_name: Option<String>,
+						pub last_name: String,
+
+						pub email_address: String,
+						pub email_verified: bool,
+					}
+					```
+
+					note:
+					Now we know what's required.
+					
+					Q: Is any string a valid email? (Primitive obsession)
+				</textarea>
+			</section>
+
+			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
+				<textarea data-template>
+					<!-- .slide: data-background-image="img/brace_yourselves_user_input.jpg" data-background-size="contain" -->
+
+					;;;
+
+					```rust
+					pub struct EmailAddress(String);
+					```
+
+					<div>
+					```rust
+					impl EmailAddress {
+
+						pub fn new(string: String) -> Result<EmailAddress, String> {
+							if is_valid_email(&string) {
+								Ok( EmailAddress(string) )
+							} else {
+								Err("Not a valid email address".into())
+							}
+						}
+
+					}
+					```
+					</div> <!-- .element: class="fragment" -->
+
+					<div>
+					```rust
+					fn tdd_email_address() {
+						let valid = EmailAddress::new("test@example.com");
+						assert!(valid.is_ok());
+						
+						let invalid = EmailAddress::new("💩💩💩");
+						assert!(invalid.is_err());
+					}
+					```
+					</div> <!-- .element: class="fragment" -->
+					
+					note:
+					EmailAddress struct has a private inner field, 
+					so can only be constructed inside this module.
+
+					`fn new()` returns an Email or Error message.
+
+					types > tests because 
+					* compiler checks them every compile
+					* invariants are more obvious
+					
+					but they are no substitute for tests because they can't check runtime behavior
+
+					;;;
+
+					<!-- .slide: data-background-image="img/mutombo_office.gif" data-background-size="contain" -->
+					
+					;;;
+					
+					```rust
+					struct Contact {
+						// name
+
+						pub email_address: EmailAddress,
+						pub email_verified: bool,
+					}
+					```
+
+					note:
+					email_address still required, but now we can count on it being a "valid" email
+					AND everywhere we use EmailAddress, we can expect the same without retesting.
+
+				</textarea>
+			</section>
+
+			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
+				<textarea data-template>
+					<!-- .slide: data-background-image="img/requirement_change.jpg" data-background-size="contain" -->										
+
+					;;;
+					
+					Contact must have **_one or more_**:
+					* Email 
+					* Address 
+					* Home Phone 
+					* Work Phone
+
+					;;;
+
+					We could...
+
+					```rust
+					struct Contact {
+						// name
+
+						pub email: Option<ContactEmail>,
+						pub address: Option<ContactAddress>,
+						pub home_phone: Option<ContactPhone>,
+						pub work_phone: Option<ContactPhone>,
+					}
+					```
+
+					But... <!-- .element: class="fragment" -->
+					* How do we know which method to use? <!-- .element: class="fragment" -->
+					* What if we have more than one home phone? <!-- .element: class="fragment" -->
+					* We need a test when all methods are None <!-- .element: class="fragment" -->
+					* Types > tests <!-- .element: class="fragment" -->
+
+					note:
+					A few not great things about this:
+					* More reasons for our constructor to fail.
+					* If we have multiple methods, how do we choose which to use?
+					* Already established that types > tests
+
+					;;;
+
+					<!-- .slide: data-background-image="img/types_TDD.jpg" data-background-size="contain" -->
+
+					;;;
+
+					Tagged Union
+					```rust
+					enum ContactMethod {
+						Email(EmailAddress),
+						Address(PostalAddress),
+						HomePhone(PhoneNumber),
+						WorkPhone(PhoneNumber)
+					}
+					```
+					
+					<div>
+					```rust
+					vec![
+						ContactMethod::Email(email_address),
+						ContactMethod::WorkPhone(phone_number),
+					]
+					```
+					</div> <!-- .element: class="fragment" -->
+
+					note:
+					First, we'll address the types of contact methods.
+
+					enums in Rust (& F#, Swift, Haskell, Ocaml, Elm, etc.)
+					are a bit more powerful, and can have data associated with each variant
+					
+					They're also known as tagged unions or discriminated unions.
+
+					And now we can have a list of these.
+
+					;;;
+
+					```rust
+					struct Contact {
+						// name
+
+						pub contact_methods: Vec<ContactMethod>,
+					}
+					```
+
+					note:
+					So we put a list of them in our Contact.
+					But we have the 1+ issue again. 
+					List could be empty, and which should we use? 
+
+					Can we ensure that we have 1+? Yep!
+
+					;;;
+
+					```rust
+					struct Contact {
+						// name 
+
+						pub primary_contact_method: ContactMethod,
+						pub secondary_contact_methods: Vec<ContactMethod>,
+					}
+					```
+
+					Now, there's no need for the 1+ test. <!-- .element: class="fragment" -->
+
+					note:
+					Now, primary_contact_method is required, and any additional methods
+					go into secondary_contact_methods.
+
+					No need for the 1+ test.
+					If I even tried to write it the compiler would say stop, hammer-time.
+
+					;;;
+
+					<!-- .slide: data-background-image="img/stop_hammer.webp" data-background-size="contain" -->										
+					
+				</textarea>
+			</section>
+
+			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
+				<textarea data-template>
+					# Sum Types & Pattern Matching
+
+					;;;
+
+					```rust
+					match contact_method {
+						ContactMethod::Email(e, v) => {  }
+						ContactMethod::Address(e, v) => {  }
+						ContactMethod::HomePhone(e) => {  }
+						ContactMethod::WorkPhone{ number: n, ..} => {  }
+					}
+					```
+
+					;;;
+
+					<!-- .slide: data-background-image="img/types_TDD.jpg" data-background-size="contain" -->										
+
+				</textarea>
+			</section>
+		</div>
+	</div>
+
+	<script src="lib/js/head.min.js"></script>
+	<script src="js/reveal.js"></script>
+
+	<script>
+		// More info about config & dependencies:
+		// - https://github.com/hakimel/reveal.js#configuration
+		// - https://github.com/hakimel/reveal.js#dependencies
+		Reveal.initialize({
+			// previewLinks: true,
+			showNotes: true,
+			history: true,
+
+			dependencies: [
+				{ src: 'plugin/markdown/marked.js' },
+				{ src: 'plugin/markdown/markdown.js' },
+				{ src: 'plugin/notes/notes.js', async: true },
+				{ src: 'plugin/highlight/highlight.js', async: true, callback: function () { hljs.initHighlightingOnLoad(); } }
+			]
+		});
+	</script>
+</body>
+
+</html>
