@@ -297,6 +297,19 @@
 
 					;;;
 
+					```csharp
+					class Contact {
+						public string FirstName;
+						public string MiddleName;
+						public string LastName;
+
+						public string EmailAddress;
+						// etc.
+					}
+					```
+
+					;;;
+
 					```rust
 					struct Contact {
 						pub first_name: Option<String>,
@@ -304,7 +317,6 @@
 						pub last_name: Option<String>,
 
 						pub email_address: Option<String>,
-						pub email_verified: bool,
 					}
 					```
 
@@ -329,7 +341,6 @@
 						pub last_name: String,
 
 						pub email_address: String,
-						pub email_verified: bool,
 					}
 					```
 
@@ -353,15 +364,15 @@
 					<div>
 					```rust
 					impl EmailAddress {
-
-						pub fn new(string: String) -> Result<EmailAddress, String> {
+						pub fn new(string: String) 
+							-> Result<EmailAddress, String> {
+							
 							if is_valid_email(&string) {
 								Ok( EmailAddress(string) )
 							} else {
 								Err("Not a valid email address".into())
 							}
 						}
-
 					}
 					```
 					</div> <!-- .element: class="fragment" -->
@@ -401,7 +412,6 @@
 						// name
 
 						pub email_address: EmailAddress,
-						pub email_verified: bool,
 					}
 					```
 
@@ -442,7 +452,7 @@
 					But... <!-- .element: class="fragment" -->
 					* How do we know which method to use? <!-- .element: class="fragment" -->
 					* What if we have more than one home phone? <!-- .element: class="fragment" -->
-					* We need a test when all methods are None <!-- .element: class="fragment" -->
+					* We need a test for when all methods are None <!-- .element: class="fragment" -->
 					* Types > tests <!-- .element: class="fragment" -->
 
 					note:
@@ -532,23 +542,8 @@
 
 			<section data-markdown data-separator-vertical="^\n;;;\n$" data-separator-notes="^note:">
 				<textarea data-template>
-					# Sum Types & Pattern Matching
-
-					;;;
-
-					```rust
-					match contact_method {
-						ContactMethod::Email(e, v) => {  }
-						ContactMethod::Address(e, v) => {  }
-						ContactMethod::HomePhone(e) => {  }
-						ContactMethod::WorkPhone{ number: n, ..} => {  }
-					}
-					```
-
-					;;;
-
-					<!-- .slide: data-background-image="img/types_TDD.jpg" data-background-size="contain" -->										
-
+					Slides:
+					https://ghotiphud.github.io/stop-compile-time
 				</textarea>
 			</section>
 		</div>
